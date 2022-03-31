@@ -11,16 +11,15 @@ let variant = ref<IVariant>();
 const flag = "beta-experimentation";
 
 const moveToStep = (step: number) => {
-  mixpanel.track("Moved to step " + step);
+  mixpanel.track("Moved to step " + step, {
+    flag,
+    variant: variant.value?.name,
+  });
   currentStep.value = step;
 };
 
 const evaluateFlag = async () => {
   variant.value = await getUnleashVariant(flag);
-  mixpanel.register({
-    flag,
-    variant: variant.value.name,
-  });
 
   if (variant.value.name !== "disabled") {
     visibleButton.value = variant.value.name;
@@ -32,7 +31,10 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
-  mixpanel.track("Started beta experimentation");
+  mixpanel.track("Started beta experimentation", {
+    flag,
+    variant: variant.value?.name,
+  });
 });
 </script>
 
